@@ -1,4 +1,4 @@
-# Command-Trainer
+# Command-Trainer <Beta>
 
 URL: https://command-trainer.web.app/
 
