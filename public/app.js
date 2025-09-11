@@ -261,14 +261,40 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProblemNavigation(problems, jumpToProblemCallback) {
       this.dom.problemNavList.innerHTML = '';
       const fragment = document.createDocumentFragment();
-      problems.forEach((_, index) => {
-        const navBtn = document.createElement('button');
-        navBtn.className = 'problem-nav-btn';
-        navBtn.textContent = index + 1;
-        navBtn.dataset.problemIndex = index;
-        navBtn.addEventListener('click', (e) => jumpToProblemCallback(e));
-        fragment.appendChild(navBtn);
-      });
+
+      // 問題をセットごとにグループ化
+      const groupedProblems = problems.reduce((acc, problem, index) => {
+          const setName = problem.setName || 'その他の問題';
+          if (!acc[setName]) {
+              acc[setName] = [];
+          }
+          // 元のインデックスも保持
+          acc[setName].push({ ...problem, originalIndex: index });
+          return acc;
+      }, {});
+
+      // グループごとに描画
+      for (const setName in groupedProblems) {
+          const groupContainer = document.createElement('div');
+          groupContainer.className = 'problem-nav-group';
+
+          const groupTitle = document.createElement('h4');
+          groupTitle.className = 'problem-nav-group__title';
+          groupTitle.textContent = setName;
+          groupContainer.appendChild(groupTitle);
+
+          groupedProblems[setName].forEach(problemData => {
+              const navBtn = document.createElement('button');
+              navBtn.className = 'problem-nav-btn';
+              navBtn.textContent = problemData.id; // 問題セット内のIDを表示
+              navBtn.dataset.problemIndex = problemData.originalIndex; // 全体でのインデックスを保持
+              navBtn.title = problemData.question; // ツールチップで問題文を表示
+              navBtn.addEventListener('click', (e) => jumpToProblemCallback(e));
+              groupContainer.appendChild(navBtn);
+          });
+          fragment.appendChild(groupContainer);
+      }
+
       this.dom.problemNavList.appendChild(fragment);
     }
 
@@ -281,19 +307,33 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     updateProblemNavigation(problems, currentIndex, bookmarkedIds, getUniqueIdCallback) {
       const { CURRENT, COMPLETED, BOOKMARKED } = CONFIG.CSS_CLASSES;
-      const navBtns = this.dom.problemNavList.children;
-      for (let i = 0; i < problems.length; i++) {
-        const btn = navBtns[i];
-        const problem = problems[i];
-        btn.classList.remove(CURRENT, COMPLETED, BOOKMARKED);
+      const navBtns = this.dom.problemNavList.querySelectorAll('.problem-nav-btn');
+      navBtns.forEach(btn => {
+          const index = parseInt(btn.dataset.problemIndex, 10);
+          const problem = problems[index];
+          btn.classList.remove(CURRENT, COMPLETED, BOOKMARKED);
 
-        if (i < currentIndex) btn.classList.add(COMPLETED);
-        else if (i === currentIndex) btn.classList.add(CURRENT);
+          if (index < currentIndex) btn.classList.add(COMPLETED);
+          else if (index === currentIndex) btn.classList.add(CURRENT);
 
-        const uniqueId = getUniqueIdCallback(problem);
-        if (uniqueId && bookmarkedIds.has(uniqueId)) {
-          btn.classList.add(BOOKMARKED);
-        }
+          const uniqueId = getUniqueIdCallback(problem);
+          if (uniqueId && bookmarkedIds.has(uniqueId)) {
+              btn.classList.add(BOOKMARKED);
+          }
+      });
+      
+      // --- 進捗状況の更新処理を追加 ---
+      const total = problems.length;
+      // 完了数は、全ての問題を解き終わった場合(currentIndex === total)も考慮する
+      const completedCount = Math.min(currentIndex, total);
+      const progressPercent = total > 0 ? (completedCount / total) * 100 : 0;
+      
+      const progressTextEl = document.getElementById('progress-text');
+      const progressBarEl = document.getElementById('progress-bar');
+      
+      if (progressTextEl && progressBarEl) {
+        progressTextEl.textContent = `進捗: ${completedCount} / ${total}`;
+        progressBarEl.style.width = `${progressPercent}%`;
       }
     }
 
@@ -656,6 +696,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentProblem) {
         const uniqueId = this._getUniqueProblemId(currentProblem);
         this.ui.dom.bookmarkCheck.checked = uniqueId ? this.state.bookmarkedProblemIds.has(uniqueId) : false;
+      } else {
+          // 全問完了した場合
+          this.ui.dom.bookmarkCheck.checked = false;
       }
       this._updateProblemNavigation();
     }
@@ -1213,7 +1256,8 @@ document.addEventListener('DOMContentLoaded', () => {
       Object.entries(allProblemData).forEach(([commandKey, commandData]) => {
         commandData.problems.forEach(problem => {
           if (selectedProblemIds.has(`${commandKey}:${problem.id}`)) {
-            problemsToLoad.push({ ...problem, commandKey: commandKey });
+            // === ここを変更: setNameを追加 ===
+            problemsToLoad.push({ ...problem, commandKey: commandKey, setName: commandData.name });
           }
         });
       });
@@ -1225,6 +1269,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         this.currentApp = null;
         this.ui.dom.problemElement.textContent = CONFIG.MESSAGES.SESSION_START;
+        // 問題がない場合、プログレスバーもリセット
+        const progressTextEl = document.getElementById('progress-text');
+        const progressBarEl = document.getElementById('progress-bar');
+        if(progressTextEl && progressBarEl) {
+            progressTextEl.textContent = '進捗: 0 / 0';
+            progressBarEl.style.width = '0%';
+        }
       }
     }
   }
