@@ -9,47 +9,22 @@
 <body>
   <header class="page-header">
     <div class="page-header__left-items">
-        <h1 class="page-header__title">Command Trainer〈Beta Version〉</h1>
+        <h1 class="page-header__title" data-i18n-key="appTitle">Command Trainer〈Beta Version〉</h1>
     </div>
     <div class="page-header__right-items">
       <div class="button-group">
-        <div class="tooltip-container">
-          <label for="customProblemUpload" class="button">My問題を追加</label>
-          <input type="file" id="customProblemUpload" accept=".json" style="display: none;">
-          
-          <div id="jsonFormatTooltip" class="tooltip">
-            <div class="tooltip__content">
-              <strong>読み込むJSONファイルの形式:</strong>
-              <pre><code>{
-  "new-command-set": {
-    "name": "新しいコマンド編",
-    "problems": [
-      {
-        "id": 1,
-        "question": "問題文をここに書きます。",
-        "answers": ["command1", "alias_command"],
-        "explanation": "解説文をここに書きます。(任意)",
-        "output": "実行結果の想定出力を書きます。(任意)"
-      }
-    ]
-  }
-}</code></pre>
-              <p class="tooltip__note">
-                - ルートはオブジェクトです。<br>
-                - <code>"new-command-set"</code>の部分は、他の問題セットと重複しないキーにしてください。<br>
-                - 各問題の<code>id</code>, <code>question</code>, <code>answers</code>は必須です。
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <button id="resetCustomProblemsBtn" class="button">My問題を削除</button>
+        <button id="openWizardBtn" class="button" data-i18n-key="manageMyProblems">My問題を管理</button>
       </div>
+      <select id="langSelect" class="lang-select">
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+      </select>
       <select id="themeSelect" class="theme-select">
-        <option value="default">デフォルトテーマ</option>
-        <option value="ubuntu">Ubuntu風テーマ</option>
-        <option value="light">ライトテーマ</option>
-        <option value="powershell">PowerShell風テーマ</option>
+        <option value="light" data-i18n-key="themeLight">ライトテーマ</option>
+        <option value="dark" data-i18n-key="themeDark">ダークテーマ</option>
+        <option value="ubuntu" data-i18n-key="themeUbuntu">Ubuntu風テーマ</option>
+        <option value="powershell" data-i18n-key="themePowerShell">PowerShell風テーマ</option>
+        <option value="sepia" data-i18n-key="themeSepia">セピアテーマ</option>
       </select>
     </div>
   </header>
@@ -57,33 +32,33 @@
   <div class="container">
     <div class="main-content">
       <aside class="sidebar card">
-        <h3 class="card__title">問題セット</h3>
+        <h3 class="card__title" data-i18n-key="problemSetTitle">問題セット</h3>
         <div class="card__body" id="problem-selector-list">
         </div>
       </aside>
-      
+
       <div class="resizer" id="resizer"></div>
-      
+
       <div class="main-column">
         <div class="main-column__grid">
             <aside class="card problem-card">
               <h3 class="card__title">
-                <span>問題</span>
+                <span data-i18n-key="problemTitle">問題</span>
                 <div class="card__title-actions">
                   <label for="bookmarkCheck" class="bookmark-label">
                     <input type="checkbox" id="bookmarkCheck">
-                    苦手チェック
+                    <span data-i18n-key="bookmarkLabel">苦手チェック</span>
                   </label>
                 </div>
               </h3>
               <div class="card__body">
-                <div id="problem" class="problem-text">読み込み中...</div>
+                <div id="problem" class="problem-text" data-i18n-key="loading">読み込み中...</div>
                 <div id="solutionDisplay" class="solution-display" style="display: none;"></div>
                 <div class="button-group">
-                  <button id="prevBtn" class="button">前へ</button>
-                  <button id="nextBtn" class="button">次へ</button>
-                  <button id="showAnsBtn" class="button">答えを見る</button>
-                  <button id="resetBtn" class="button">リセット</button>
+                  <button id="prevBtn" class="button" data-i18n-key="prevBtn">前へ</button>
+                  <button id="nextBtn" class="button" data-i18n-key="nextBtn">次へ</button>
+                  <button id="showAnsBtn" class="button" data-i18n-key="showAnsBtn">答えを見る</button>
+                  <button id="resetBtn" class="button" data-i18n-key="resetBtn">リセット</button>
                 </div>
               </div>
             </aside>
@@ -101,9 +76,9 @@
 
         <div class="card problem-navigation-card">
             <h3 class="card__title">
-                <span>問題一覧</span>
+                <span data-i18n-key="problemListTitle">問題一覧</span>
                 <div id="progress-indicator" class="progress-indicator">
-                    <span id="progress-text">進捗: 0 / 0</span>
+                    <span id="progress-text" data-i18n-key="progressLabel" data-i18n-format="進捗: {0} / {1}">進捗: 0 / 0</span>
                     <div class="progress-bar-container">
                         <div id="progress-bar" class="progress-bar"></div>
                     </div>
@@ -117,11 +92,102 @@
       </div>
     </div>
   </div>
-  
+
   <footer class="page-footer">
     <p>&copy; 2025 Command Trainer. Created by kikkun.</p>
   </footer>
 
-  <script src="app.js"></script>
+  <div id="customProblemWizard" class="wizard-modal">
+    <div class="wizard-content">
+      <header class="wizard-header" data-i18n-key="wizardTitle">
+        My問題 管理ウィザード
+      </header>
+
+      <div class="wizard-container">
+        <aside class="wizard-sidebar">
+          <ul class="wizard-progress-list">
+            <li class="wizard-progress-step" data-step="1" data-i18n-key="wizardStep1">1. JSON読み込み</li>
+            <li class="wizard-progress-step" data-step="2" data-i18n-key="wizardStep2">2. 問題の整理</li>
+            <li class="wizard-progress-step" data-step="3" data-i18n-key="wizardStep3">3. 確認</li>
+          </ul>
+        </aside>
+
+        <main class="wizard-main">
+          <div class="wizard-body">
+
+            <div class="wizard-step" data-step="1">
+              <section class="wizard-section wizard-upload-area">
+                <h4 class="wizard-section__title" data-i18n-key="wizardAddProblems">新しい問題を追加</h4>
+                <p class="text--muted" data-i18n-key="wizardUploadDesc">学習させたいコマンド問題のJSONファイルをアップロードしてください。</p>
+                <div class="tooltip-container">
+                  <label for="customProblemUpload" class="button" data-i18n-key="wizardSelectJson">JSONファイルを選択</label>
+                  <input type="file" id="customProblemUpload" accept=".json" style="display: none;">
+
+                  <div id="jsonFormatTooltip" class="tooltip">
+                    <div class="tooltip__content">
+                      <strong data-i18n-key="jsonFormatTitle">読み込むJSONファイルの形式:</strong>
+                      <pre><code><span class="json-punctuation">{</span>
+  <span class="json-key">"new-command-set"</span><span class="json-punctuation">:</span> <span class="json-punctuation">{</span>
+    <span class="json-key">"name"</span><span class="json-punctuation">:</span> <span class="json-string">"新しいコマンド編"</span><span class="json-punctuation">,</span>
+    <span class="json-key">"problems"</span><span class="json-punctuation">:</span> <span class="json-punctuation">[</span>
+      <span class="json-punctuation">{</span>
+        <span class="json-key">"id"</span><span class="json-punctuation">:</span> <span class="json-number">1</span><span class="json-punctuation">,</span>
+        <span class="json-key">"question"</span><span class="json-punctuation">:</span> <span class="json-string">"問題文をここに書きます。"</span><span class="json-punctuation">,</span>
+        <span class="json-key">"answers"</span><span class="json-punctuation">:</span> <span class="json-punctuation">[</span><span class="json-string">"command1"</span><span class="json-punctuation">,</span> <span class="json-string">"alias_command"</span><span class="json-punctuation">]</span><span class="json-punctuation">,</span>
+        <span class="json-key">"explanation"</span><span class="json-punctuation">:</span> <span class="json-string">"解説文をここに書きます。(任意)"</span><span class="json-punctuation">,</span>
+        <span class="json-key">"output"</span><span class="json-punctuation">:</span> <span class="json-string">"実行結果の想定出力を書きます。(任意)"</span>
+      <span class="json-punctuation">}</span>
+    <span class="json-punctuation">]</span>
+  <span class="json-punctuation">}</span>
+<span class="json-punctuation">}</span></code></pre>
+                      <p class="tooltip__note" data-i18n-key="jsonFormatNote" style="white-space: pre-line;">
+- ルートはオブジェクトです。
+- "new-command-set"の部分は、他の問題セットと重複しないキーにしてください。
+- 各問題のid, question, answersは必須です。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div id="wizard-upload-feedback"></div>
+              </section>
+            </div>
+
+            <div class="wizard-step" data-step="2">
+              <section class="wizard-section">
+                <div class="wizard-section__header">
+                  <h4 class="wizard-section__title" data-i18n-key="wizardCurrentProblems">現在のMy問題</h4>
+                  <button id="wizardDeleteAllBtn" class="button button--danger" data-i18n-key="wizardDeleteAll">全削除</button>
+                </div>
+                <p class="text--muted" data-i18n-key="wizardManageDesc">追加した問題セットの確認や、不要な問題・問題セットの削除ができます。</p>
+                <div id="wizardProblemList">
+                </div>
+              </section>
+            </div>
+
+            <div class="wizard-step" data-step="3">
+              <section class="wizard-section">
+                <h4 class="wizard-section__title" data-i18n-key="wizardConfirmTitle">変更内容の確認</h4>
+                <p class="text--muted" data-i18n-key="wizardConfirmDesc">以下の内容でMy問題を更新します。「完了」ボタンを押すと変更が保存されます。</p>
+                <div id="wizard-confirmation-summary">
+                </div>
+              </section>
+            </div>
+
+          </div>
+          <footer class="wizard-footer">
+            <button id="wizardPrevBtn" class="button" data-i18n-key="wizardBackBtn">戻る</button>
+            <div class="button-group">
+                <button id="closeWizardBtn" class="button" data-i18n-key="wizardCancelBtn">キャンセル</button>
+                <button id="wizardNextBtn" class="button" data-i18n-key="wizardNextBtn">次へ</button>
+                <button id="wizardCompleteBtn" class="button button--primary" data-i18n-key="wizardCompleteBtn">完了</button>
+            </div>
+          </footer>
+        </main>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
