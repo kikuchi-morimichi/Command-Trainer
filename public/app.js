@@ -18,6 +18,7 @@
  */
 
   window.addEventListener('load', () => {
+  
   // 厳格モードを有効にし、コードの品質を高める
   'use strict';
 
