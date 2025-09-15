@@ -121,7 +121,8 @@
                 <p class="text--muted" data-i18n-key="wizardUploadDesc">学習させたいコマンド問題のJSONファイルをアップロードしてください。</p>
                 <div class="tooltip-container">
                   <label for="customProblemUpload" class="button" data-i18n-key="wizardSelectJson">JSONファイルを選択</label>
-                  <input type="file" id="customProblemUpload" accept=".json" style="display: none;">
+                  <!-- 複数ファイル選択を可能にするため 'multiple' 属性を追加 -->
+                  <input type="file" id="customProblemUpload" accept=".json" multiple style="display: none;">
 
                   <div id="jsonFormatTooltip" class="tooltip">
                     <div class="tooltip__content">
@@ -188,6 +189,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+<script src="app.js" defer></script>
 </body>
 </html>
