@@ -17,10 +17,11 @@
  * prior written permission of Kikkun.
  */
 
-// 厳格モードを有効にし、コードの品質を高める
+  window.addEventListener('load', () => {
+  // 厳格モードを有効にし、コードの品質を高める
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', () => {
+　//document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * アプリケーション全体で使用する設定値
