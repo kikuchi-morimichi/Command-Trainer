@@ -57,6 +57,7 @@ window.addEventListener('load', () => {
       wizardPrevBtn: '#wizardPrevBtn',
       wizardNextBtn: '#wizardNextBtn',
       wizardCompleteBtn: '#wizardCompleteBtn',
+      wizardExportBtn: '#wizardExportBtn',
       closeWizardBtn: '#closeWizardBtn',
       wizardProblemList: '#wizardProblemList',
       customProblemUpload: '#customProblemUpload',
@@ -147,6 +148,7 @@ window.addEventListener('load', () => {
       wizardConfirmDesc: '以下の内容でMy問題を更新します。「完了」ボタンを押すと変更が保存されます。',
       wizardBackBtn: '戻る',
       wizardCancelBtn: 'キャンセル',
+      wizardExportBtn: 'JSON出力',
       wizardNextBtn: '次へ',
       wizardCompleteBtn: '完了',
       scenarioCategory: 'シナリオ編',
@@ -173,6 +175,7 @@ window.addEventListener('load', () => {
           JSON_PARSE_ERROR: (errorMsg) => `エラー: ${errorMsg}\nJSONの形式を確認してください。`,
           SCENARIO_INCORRECT: 'コマンドが正しくありません。現在のステップの指示を確認してください。',
           NO_CUSTOM_PROBLEMS: '<p class="text--muted">現在、My問題はありません。<br>JSONファイルをアップロードして追加できます。</p>',
+          NOTHING_TO_EXPORT: 'エクスポートするMy問題がありません。',
           WIZARD_UPLOAD_SUCCESS: (filename) => `ファイル「${filename}」を読み込みました。「次へ」進んでください。`,
           WIZARD_UPLOAD_SUCCESS_MULTI_JA: (count) => `✅ ${count} 件のファイルが正常に読み込まれました。「次へ」進んでください。`,
           WIZARD_UPLOAD_FAIL_MULTI_JA: (count) => `❌ ${count} 件のファイルの読み込みに失敗しました。`,
@@ -307,6 +310,7 @@ window.addEventListener('load', () => {
       wizardConfirmDesc: 'My Problems will be updated with the following content. Press "Complete" to save the changes.',
       wizardBackBtn: 'Back',
       wizardCancelBtn: 'Cancel',
+      wizardExportBtn: 'Export JSON',
       wizardNextBtn: 'Next',
       wizardCompleteBtn: 'Complete',
       scenarioCategory: 'Scenarios',
@@ -333,6 +337,7 @@ window.addEventListener('load', () => {
           JSON_PARSE_ERROR: (errorMsg) => `Error: ${errorMsg}\nPlease check the JSON format.`,
           SCENARIO_INCORRECT: 'Incorrect command. Please check the instructions for the current step.',
           NO_CUSTOM_PROBLEMS: '<p class="text--muted">There are currently no "My Problems".<br>You can add them by uploading a JSON file.</p>',
+          NOTHING_TO_EXPORT: 'There are no My Problems to export.',
           WIZARD_UPLOAD_SUCCESS: (filename) => `File "${filename}" loaded. Please proceed to "Next".`,
           WIZARD_UPLOAD_SUCCESS_MULTI_EN: (count) => `✅ ${count} files successfully loaded. Please proceed to Next.`,
           WIZARD_UPLOAD_FAIL_MULTI_EN: (count) => `❌ ${count} files failed to load.`,
@@ -1409,6 +1414,7 @@ window.addEventListener('load', () => {
           this.ui.dom.wizardPrevBtn.style.display = (stepNumber === 1) ? 'none' : 'inline-flex';
           this.ui.dom.wizardNextBtn.style.display = (stepNumber === 3) ? 'none' : 'inline-flex';
           this.ui.dom.wizardCompleteBtn.style.display = (stepNumber === 3) ? 'inline-flex' : 'none';
+          this.ui.dom.wizardExportBtn.style.display = (stepNumber === 3) ? 'inline-flex' : 'none';
       }
 
       /** ステップ1の表示を準備 */
@@ -1507,7 +1513,7 @@ window.addEventListener('load', () => {
        * @private
        */
       _bindEvents() {
-          const { openWizardBtn, closeWizardBtn, wizardModal, wizardProblemList, customProblemUpload, wizardPrevBtn, wizardNextBtn, wizardCompleteBtn, wizardDeleteAllBtn } = this.ui.dom;
+          const { openWizardBtn, closeWizardBtn, wizardModal, wizardProblemList, customProblemUpload, wizardPrevBtn, wizardNextBtn, wizardCompleteBtn, wizardExportBtn, wizardDeleteAllBtn } = this.ui.dom;
 
           openWizardBtn.addEventListener('click', () => this.open());
           closeWizardBtn.addEventListener('click', () => this.close());
@@ -1517,6 +1523,7 @@ window.addEventListener('load', () => {
               this.appController.commitWizardChanges(this.state.stagedData);
               this.close();
           });
+          wizardExportBtn.addEventListener('click', () => this._handleExportJson());
 
           // モーダルの外側クリックで閉じる
           wizardModal.addEventListener('click', (e) => {
@@ -1631,6 +1638,33 @@ window.addEventListener('load', () => {
             feedbackEl.innerHTML = feedbackMessage;
             event.target.value = ''; // ファイル選択をリセット
         });
+      }
+      
+      /**
+       * 現在のMy問題をJSONファイルとしてエクスポートする
+       * @private
+       */
+      _handleExportJson() {
+          const dataToExport = this.state.stagedData;
+          const currentLang = this.appController.currentLang;
+
+          if (Object.keys(dataToExport).length === 0) {
+              alert(I18N[currentLang].messages.NOTHING_TO_EXPORT);
+              return;
+          }
+
+          const jsonString = JSON.stringify(dataToExport, null, 2);
+          const blob = new Blob([jsonString], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'my_problems.json';
+          document.body.appendChild(a);
+          a.click();
+          
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
       }
 
       /**
@@ -1747,8 +1781,10 @@ window.addEventListener('load', () => {
       const { problemSelectorList } = this.ui.dom;
       const i18n = I18N[this.currentLang];
       problemSelectorList.innerHTML = '';
-
       const fragment = document.createDocumentFragment();
+
+      // --- Linuxコマンドセクションの構築 ---
+      const { container: linuxCommandContainer, contentList: linuxCommandContent } = this._createCategorySection('Linuxコマンド', false);
 
       // 標準問題とシナリオ問題を分類
       const standardProblems = {};
@@ -1761,114 +1797,87 @@ window.addEventListener('load', () => {
           }
       });
 
-      // 標準問題を描画
+      // 標準問題をLinuxコマンドセクションに追加
       Object.entries(standardProblems).forEach(([key, data]) => {
-        fragment.appendChild(this._createProblemGroupEl(key, data, true));
+        linuxCommandContent.appendChild(this._createProblemGroupEl(key, data, true));
       });
 
-      // シナリオ問題を描画
+      // シナリオセクションを構築し、Linuxコマンドセクションに追加
       if (Object.keys(scenarioProblems).length > 0) {
-          fragment.appendChild(this._createScenarioSection(scenarioProblems));
+          const { container: scenarioContainer, contentList: scenarioContent } = this._createCategorySection(i18n.scenarioCategory, true);
+          Object.entries(scenarioProblems).forEach(([key, data]) => {
+              scenarioContent.appendChild(this._createProblemGroupEl(key, data, false));
+          });
+          linuxCommandContent.appendChild(scenarioContainer);
       }
+      
+      fragment.appendChild(linuxCommandContainer);
 
-      // カスタム問題（My問題）を描画
+
+      // --- My問題セクションの構築 ---
       if (Object.keys(this.customProblemData).length > 0) {
-        fragment.appendChild(this._createCustomProblemSection());
+          const { container: customContainer, contentList: customContent } = this._createCategorySection(i18n.myProblemsCategory, true);
+           Object.entries(this.customProblemData).forEach(([key, data]) => {
+              customContent.appendChild(this._createProblemGroupEl(key, data, false));
+          });
+          fragment.appendChild(customContainer);
       }
 
       problemSelectorList.appendChild(fragment);
 
-      // 親チェックボックスの状態を更新
+      // すべての親チェックボックスの状態を初期設定
       problemSelectorList.querySelectorAll('.command-group').forEach(group => {
         this._updateParentCheckboxState(group);
       });
     }
 
     /**
-     * シナリオ問題のセクション（アコーディオン）を作成する
+     * 問題カテゴリのセクション（アコーディオン）を作成する
      * @private
      */
-    _createScenarioSection(scenarioProblems) {
+    _createCategorySection(categoryName, isInitiallyClosed = true) {
       const { CLOSED } = CONFIG.CSS_CLASSES;
-      const scenarioContainer = document.createElement('div');
-      scenarioContainer.className = `command-group ${CLOSED}`;
+      const container = document.createElement('div');
+      container.className = `command-group ${isInitiallyClosed ? CLOSED : ''}`;
 
       const title = document.createElement('div');
       title.className = 'command-title';
-      title.addEventListener('click', (e) => {
-        if (e.target.type === 'checkbox') return;
-        scenarioContainer.classList.toggle(CLOSED);
-      });
 
       const groupCheckbox = document.createElement('input');
       groupCheckbox.type = 'checkbox';
       groupCheckbox.style.marginRight = '8px';
+      groupCheckbox.addEventListener('click', e => e.stopPropagation());
 
       const titleText = document.createElement('span');
-      titleText.textContent = I18N[this.currentLang].scenarioCategory;
+      titleText.textContent = categoryName;
 
       title.append(groupCheckbox, titleText);
 
-      const listContainer = document.createElement('div');
-      listContainer.className = 'problem-checklist';
-      listContainer.style.paddingLeft = '0';
-      listContainer.style.margin = '0';
+      const contentList = document.createElement('div');
+      contentList.className = 'problem-checklist';
+      contentList.style.paddingLeft = '0';
+      contentList.style.margin = '0';
 
-      Object.entries(scenarioProblems).forEach(([key, data]) => {
-        listContainer.appendChild(this._createProblemGroupEl(key, data, false));
-      });
-
-      // 親チェックボックスで子要素を全選択/解除
-      groupCheckbox.addEventListener('change', (e) => {
-        listContainer.querySelectorAll('input[type="checkbox"]').forEach(child => child.checked = e.target.checked);
-        this.startNewSession();
-      });
-
-      scenarioContainer.append(title, listContainer);
-      return scenarioContainer;
-    }
-
-    /**
-     * My問題のセクション（アコーディオン）を作成する
-     * @private
-     */
-    _createCustomProblemSection() {
-      const { CLOSED } = CONFIG.CSS_CLASSES;
-      const customContainer = document.createElement('div');
-      customContainer.className = `command-group`;
-
-      const title = document.createElement('div');
-      title.className = 'command-title';
+      // アコーディオン開閉
       title.addEventListener('click', (e) => {
-        if (e.target.type === 'checkbox') return;
-        customContainer.classList.toggle(CLOSED);
+          if (e.target.type === 'checkbox') return;
+          container.classList.toggle(CLOSED);
       });
 
-      const groupCheckbox = document.createElement('input');
-      groupCheckbox.type = 'checkbox';
-      groupCheckbox.style.marginRight = '8px';
-
-      const titleText = document.createElement('span');
-      titleText.textContent = I18N[this.currentLang].myProblemsCategory;
-
-      title.append(groupCheckbox, titleText);
-
-      const listContainer = document.createElement('div');
-      listContainer.className = 'problem-checklist';
-      listContainer.style.paddingLeft = '0';
-      listContainer.style.margin = '0';
-
-      Object.entries(this.customProblemData).forEach(([key, data]) => {
-        listContainer.appendChild(this._createProblemGroupEl(key, data, false));
-      });
-
+      // 親チェックボックスで子を全選択/解除
       groupCheckbox.addEventListener('change', (e) => {
-        listContainer.querySelectorAll('input[type="checkbox"]').forEach(child => child.checked = e.target.checked);
-        this.startNewSession();
+          contentList.querySelectorAll('input[type="checkbox"]').forEach(child => {
+              child.checked = e.target.checked;
+              if (child.indeterminate) {
+                  child.indeterminate = false;
+              }
+          });
+          this.startNewSession();
       });
 
-      customContainer.append(title, listContainer);
-      return customContainer;
+      container.append(title, contentList);
+
+      return { container, contentList, groupCheckbox };
     }
 
     /**
@@ -1969,10 +1978,10 @@ window.addEventListener('load', () => {
       listEl.addEventListener('change', (e) => {
           if (e.target.type === 'checkbox') {
               this._updateParentCheckboxState(groupEl);
-              // ネストされたグループの場合、さらにその親も更新
-              const parentContainer = groupEl.closest('.command-group').parentElement?.closest('.command-group');
-              if (parentContainer) {
-                this._updateParentCheckboxState(parentContainer);
+              // さらにその上の階層の親もすべて更新
+              let parentContainer = groupEl;
+              while ((parentContainer = parentContainer.parentElement?.closest('.command-group'))) {
+                  this._updateParentCheckboxState(parentContainer);
               }
               this.startNewSession();
           }
