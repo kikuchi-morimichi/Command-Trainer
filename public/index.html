@@ -9,12 +9,9 @@
 <body>
   <header class="page-header">
     <div class="page-header__left-items">
-        <h1 class="page-header__title" data-i18n-key="appTitle">Command Trainer〈Beta Version〉</h1>
+      <h1 class="page-header__title" data-i18n-key="appTitle">Command Trainer〈Beta Version〉</h1>
     </div>
     <div class="page-header__right-items">
-      <div class="button-group">
-        <button id="openWizardBtn" class="button" data-i18n-key="manageMyProblems">My問題を管理</button>
-      </div>
       <select id="langSelect" class="lang-select">
         <option value="ja">日本語</option>
         <option value="en">English</option>
@@ -26,13 +23,29 @@
         <option value="powershell" data-i18n-key="themePowerShell">PowerShell風テーマ</option>
         <option value="sepia" data-i18n-key="themeSepia">セピアテーマ</option>
       </select>
+      <div class="button-group">
+        <button id="openWizardBtn" class="button" data-i18n-key="manageMyProblems">My問題を管理</button>
+        <button id="settingsBtn" class="button button--icon" title="設定" aria-label="設定">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.7C8.63,5.94,8.1,6.26,7.6,6.64L5.21,5.68C4.99,5.61,4.74,5.68,4.63,5.88l-1.92,3.32 c-0.12,0.22-0.07,0.47,0.12,0.61L4.86,11c-0.05,0.3-0.07,0.62-0.07,0.94s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.38-2.91c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
   <div class="container">
     <div class="main-content">
       <aside class="sidebar card">
-        <h3 class="card__title" data-i18n-key="problemSetTitle">問題セット</h3>
+        <h3 class="card__title">
+          <span data-i18n-key="problemSetTitle">問題セット</span>
+          <div class="card__title-actions">
+            <label for="bookmarkFilterBtn" class="bookmark-filter-label">
+              <input type="checkbox" id="bookmarkFilterBtn">
+              <span data-i18n-key="bookmarkFilterBtn">苦手のみ</span>
+            </label>
+          </div>
+        </h3>
         <div class="card__body" id="problem-selector-list">
         </div>
       </aside>
@@ -41,53 +54,53 @@
 
       <div class="main-column">
         <div class="main-column__grid">
-            <aside class="card problem-card">
-              <h3 class="card__title">
-                <span data-i18n-key="problemTitle">問題</span>
-                <div class="card__title-actions">
-                  <label for="bookmarkCheck" class="bookmark-label">
-                    <input type="checkbox" id="bookmarkCheck">
-                    <span data-i18n-key="bookmarkLabel">苦手チェック</span>
-                  </label>
-                </div>
-              </h3>
-              <div class="card__body">
-                <div id="problem" class="problem-text" data-i18n-key="loading">読み込み中...</div>
-                <div id="solutionDisplay" class="solution-display" style="display: none;"></div>
-                <div class="button-group">
-                  <button id="prevBtn" class="button" data-i18n-key="prevBtn">前へ</button>
-                  <button id="nextBtn" class="button" data-i18n-key="nextBtn">次へ</button>
-                  <button id="showAnsBtn" class="button" data-i18n-key="showAnsBtn">答えを見る</button>
-                  <button id="resetBtn" class="button" data-i18n-key="resetBtn">リセット</button>
-                </div>
+          <aside class="card problem-card">
+            <h3 class="card__title">
+              <span data-i18n-key="problemTitle">問題</span>
+              <div class="card__title-actions">
+                <label for="bookmarkCheck" class="bookmark-label">
+                  <input type="checkbox" id="bookmarkCheck">
+                  <span data-i18n-key="bookmarkLabel">苦手チェック</span>
+                </label>
               </div>
-            </aside>
+            </h3>
+            <div class="card__body">
+              <div id="problem" class="problem-text" data-i18n-key="loading">読み込み中...</div>
+              <div id="solutionDisplay" class="solution-display" hidden></div>
+              <div class="button-group">
+                <button id="prevBtn" class="button" data-i18n-key="prevBtn">前へ</button>
+                <button id="nextBtn" class="button" data-i18n-key="nextBtn">次へ</button>
+                <button id="showAnsBtn" class="button" data-i18n-key="showAnsBtn">答えを見る</button>
+                <button id="resetBtn" class="button" data-i18n-key="resetBtn">リセット</button>
+              </div>
+            </div>
+          </aside>
 
-            <section class="terminal" aria-label="practice terminal">
-              <div class="terminal__header">
-                <span class="terminal__dot terminal__dot--red"></span>
-                <span class="terminal__dot terminal__dot--yellow"></span>
-                <span class="terminal__dot terminal__dot--green"></span>
-                <span class="terminal__app-name">bash</span>
-              </div>
-              <div id="screen" class="terminal__screen" role="log" aria-live="polite"></div>
-            </section>
+          <section class="terminal" aria-label="practice terminal">
+            <div class="terminal__header">
+              <span class="terminal__dot terminal__dot--red"></span>
+              <span class="terminal__dot terminal__dot--yellow"></span>
+              <span class="terminal__dot terminal__dot--green"></span>
+              <span class="terminal__app-name">bash</span>
+            </div>
+            <div id="screen" class="terminal__screen" role="log" aria-live="polite"></div>
+          </section>
         </div>
 
         <div class="card problem-navigation-card">
-            <h3 class="card__title">
-                <span data-i18n-key="problemListTitle">問題一覧</span>
-                <div id="progress-indicator" class="progress-indicator">
-                    <span id="progress-text" data-i18n-key="progressLabel" data-i18n-format="進捗: {0} / {1}">進捗: 0 / 0</span>
-                    <div class="progress-bar-container">
-                        <div id="progress-bar" class="progress-bar"></div>
-                    </div>
-                </div>
-            </h3>
-            <div class="card__body">
-                <div id="problem-navigation-list" class="problem-nav-list">
-                </div>
+          <h3 class="card__title">
+            <span data-i18n-key="problemListTitle">問題一覧</span>
+            <div id="progress-indicator" class="progress-indicator">
+              <span id="progress-text" data-i18n-key="progressLabel" data-i18n-format="進捗: {0} / {1}">進捗: 0 / 0</span>
+              <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+              </div>
             </div>
+          </h3>
+          <div class="card__body">
+            <div id="problem-navigation-list" class="problem-nav-list">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -106,7 +119,7 @@
       <div class="wizard-container">
         <aside class="wizard-sidebar">
           <ul class="wizard-progress-list">
-            <li class="wizard-progress-step" data-step="1" data-i18n-key="wizardStep1">1. JSON読み込み</li>
+            <li class="wizard-progress-step" data-step="1" data-i18n-key="wizardStep1">1. 問題の追加</li>
             <li class="wizard-progress-step" data-step="2" data-i18n-key="wizardStep2">2. 問題の整理</li>
             <li class="wizard-progress-step" data-step="3" data-i18n-key="wizardStep3">3. 確認</li>
           </ul>
@@ -121,8 +134,7 @@
                 <p class="text--muted" data-i18n-key="wizardUploadDesc">学習させたいコマンド問題のJSONファイルをアップロードしてください。</p>
                 <div class="tooltip-container">
                   <label for="customProblemUpload" class="button" data-i18n-key="wizardSelectJson">JSONファイルを選択</label>
-                  <!-- 複数ファイル選択を可能にするため 'multiple' 属性を追加 -->
-                  <input type="file" id="customProblemUpload" accept=".json" multiple style="display: none;">
+                  <input type="file" id="customProblemUpload" accept=".json" multiple hidden>
 
                   <div id="jsonFormatTooltip" class="tooltip">
                     <div class="tooltip__content">
@@ -178,10 +190,9 @@
           <footer class="wizard-footer">
             <button id="wizardPrevBtn" class="button" data-i18n-key="wizardBackBtn">戻る</button>
             <div class="button-group">
-                <button id="closeWizardBtn" class="button" data-i18n-key="wizardCancelBtn">キャンセル</button>
-                <button id="wizardExportBtn" class="button" data-i18n-key="wizardExportBtn">JSON出力</button>
-                <button id="wizardNextBtn" class="button" data-i18n-key="wizardNextBtn">次へ</button>
-                <button id="wizardCompleteBtn" class="button button--primary" data-i18n-key="wizardCompleteBtn">完了</button>
+              <button id="closeWizardBtn" class="button" data-i18n-key="wizardCancelBtn">キャンセル</button>
+              <button id="wizardNextBtn" class="button" data-i18n-key="wizardNextBtn">次へ</button>
+              <button id="wizardCompleteBtn" class="button button--primary" data-i18n-key="wizardCompleteBtn">完了</button>
             </div>
           </footer>
         </main>
@@ -190,6 +201,29 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <div id="settingsModal" class="wizard-modal">
+    <div class="wizard-content" style="max-width: 600px; height: auto; max-height: 80vh;">
+      <header class="wizard-header" data-i18n-key="settingsTitle">設定</header>
+      <div class="wizard-body">
+        <section class="wizard-section">
+          <h4 class="wizard-section__title" data-i18n-key="settingsExportTitle">設定をエクスポート</h4>
+          <p class="text--muted" data-i18n-key="settingsExportDesc">現在の「My問題」、苦手チェックの状態、テーマ設定などを一つのファイルにバックアップします。</p>
+          <button id="exportAllSettingsBtn" class="button" data-i18n-key="wizardExportAllBtn">全設定を出力</button>
+        </section>
+        <section class="wizard-section">
+          <h4 class="wizard-section__title" data-i18n-key="wizardRestoreTitle">バックアップから復元</h4>
+          <p class="text--muted" data-i18n-key="wizardRestoreDesc">エクスポートした設定ファイル（.json）を読み込んで、My問題や苦手チェックの状態を復元します。</p>
+          <label for="restoreSettingsUpload" class="button" data-i18n-key="wizardRestoreBtn">設定ファイルを選択</label>
+          <input type="file" id="restoreSettingsUpload" accept=".json" hidden>
+          <div id="settings-restore-feedback"></div>
+        </section>
+      </div>
+      <footer class="wizard-footer" style="justify-content: flex-end;">
+        <button id="closeSettingsBtn" class="button" data-i18n-key="closeBtn">閉じる</button>
+      </footer>
+    </div>
+  </div>
+
+<script src="app.js" defer></script>
 </body>
 </html>
