@@ -1064,7 +1064,10 @@
       background-color: #f1f3f5;
       color: var(--color-text);
     }
-    body.dark-theme .tooltip__content pre {
+
+    body.dark-theme .tooltip__content pre,
+    body.ubuntu-theme .tooltip__content pre,
+    body.powershell-theme .tooltip__content pre {
       background-color: var(--color-terminal-bg);
     }
     body.sepia-theme .tooltip__content pre {
@@ -1076,31 +1079,31 @@
     }
 
     /* === Syntax Highlighting for JSON Tooltip START === */
+    /* Default Light Theme */
     .json-key { color: #9B239B; }
     .json-string { color: #198754; }
     .json-number { color: #0d6efd; }
     .json-punctuation { color: #212529; }
 
-    body.dark-theme .json-key,
-    body.ubuntu-theme .json-key,
-    body.powershell-theme .json-key {
-      color: #60a5fa;
-    }
-    body.dark-theme .json-string,
-    body.ubuntu-theme .json-string,
-    body.powershell-theme .json-string {
-      color: #00d27a;
-    }
-    body.dark-theme .json-number,
-    body.ubuntu-theme .json-number,
-    body.powershell-theme .json-number {
-      color: #facc15;
-    }
-    body.dark-theme .json-punctuation,
-    body.ubuntu-theme .json-punctuation,
-    body.powershell-theme .json-punctuation {
-      color: #e8e8e8;
-    }
+    /* Dark Theme */
+    body.dark-theme .json-key { color: #60a5fa; }
+    body.dark-theme .json-string { color: #00d27a; }
+    body.dark-theme .json-number { color: #facc15; }
+    body.dark-theme .json-punctuation { color: #e8e8e8; }
+
+    /* Ubuntu Theme - 落ち着いた色合いに調整 */
+    body.ubuntu-theme .json-key { color: #729fcf; } /* 少し明るさを抑えた青 */
+    body.ubuntu-theme .json-string { color: #8ae234; } /* 視認性の良い緑 */
+    body.ubuntu-theme .json-number { color: #fce94f; } /* Ubuntuらしい黄色 */
+    body.ubuntu-theme .json-punctuation { color: var(--color-text); }
+
+    /* PowerShell Theme - 鮮やかさを抑え、目に優しく調整 */
+    body.powershell-theme .json-key { color: #569cd6; } /* 落ち着いた青 */
+    body.powershell-theme .json-string { color: #ce9178; } /* 伝統的な文字列の色（オレンジ系） */
+    body.powershell-theme .json-number { color: #b5cea8; } /* 柔らかい緑 */
+    body.powershell-theme .json-punctuation { color: var(--color-text); }
+
+    /* Sepia Theme */
     body.sepia-theme .json-key { color: #b16286; }
     body.sepia-theme .json-string { color: #98971a; }
     body.sepia-theme .json-number { color: #d65d0e; }
@@ -1284,6 +1287,7 @@
     }
     body.dark-theme .wizard-problem-set,
     body.ubuntu-theme .wizard-problem-set,
+    body.powershell-theme .wizard-problem-set,
     body.sepia-theme .wizard-problem-set {
       background: var(--color-bg);
     }
@@ -1469,3 +1473,96 @@
       color: var(--color-blue-accent);
     }
     /* === Sidebar Visibility Improvements END === */
+
+    /* === Dashboard Tabs START === */
+    .dashboard-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .dashboard-tab-btn {
+      padding: 8px 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--color-dimmed-text);
+      font: inherit;
+      font-size: var(--font-size-sm);
+      transition: all 0.2s ease-in-out;
+    }
+    .dashboard-tab-btn:hover {
+      background-color: rgba(108, 117, 125, 0.1);
+      color: var(--color-text);
+    }
+    .dashboard-tab-btn.is-active {
+      color: var(--color-blue-accent);
+      border-bottom-color: var(--color-blue-accent);
+      font-weight: bold;
+    }
+    /* === Dashboard Tabs END === */
+
+    /* === Dashboard Theming START === */
+    body.dark-theme #dashboardModal .dashboard-tab-btn:hover,
+    body.ubuntu-theme #dashboardModal .dashboard-tab-btn:hover,
+    body.powershell-theme #dashboardModal .dashboard-tab-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--color-text);
+    }
+    body.sepia-theme #dashboardModal .dashboard-tab-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark-theme #dashboardModal .dashboard-tab-btn.is-active,
+    body.ubuntu-theme #dashboardModal .dashboard-tab-btn.is-active,
+    body.powershell-theme #dashboardModal .dashboard-tab-btn.is-active,
+    body.sepia-theme #dashboardModal .dashboard-tab-btn.is-active {
+      color: var(--color-blue-accent);
+      border-bottom-color: var(--color-blue-accent);
+    }
+
+    #dashboardModal #difficult-problems-list {
+      color: var(--color-dimmed-text);
+    }
+    /* === Dashboard Theming END === */
+
+    /* === Settings Modal New Styles START === */
+    .settings-nav {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .settings-nav-item {
+      padding: var(--spacing-md) var(--spacing-lg);
+      cursor: pointer;
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--spacing-sm);
+      transition: background-color 0.2s, color 0.2s;
+      font-weight: 500;
+    }
+    .settings-nav-item:hover {
+      background-color: rgba(108, 117, 125, 0.1);
+    }
+    .settings-nav-item.is-active {
+      background-color: rgba(79, 70, 229, 0.1);
+      color: var(--color-blue-accent);
+      font-weight: bold;
+    }
+    body.dark-theme .settings-nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    body.dark-theme .settings-nav-item.is-active {
+      background-color: rgba(129, 140, 248, 0.15);
+      color: var(--color-blue-accent);
+    }
+    body.sepia-theme .settings-nav-item.is-active {
+      background-color: rgba(69, 133, 136, 0.1);
+    }
+    .settings-tab-content {
+      display: none;
+    }
+    .settings-tab-content.is-active {
+      display: block;
+    }
+    /* === Settings Modal New Styles END === */

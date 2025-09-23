@@ -68,13 +68,22 @@ window.addEventListener('DOMContentLoaded', () => {
         restoreSettingsUpload: '#restoreSettingsUpload',
         settingsRestoreFeedback: '#settings-restore-feedback',
         bookmarkFilterBtn: '#bookmarkFilterBtn',
+        // === New selectors for Settings Modal ===
+        settingsNav: '#settingsNav',
+        settingsTabContents: '.settings-tab-content',
+        feedbackForm: '#feedbackForm',
+        submitFeedbackBtn: '#submitFeedbackBtn',
+        feedbackFormStatus: '#feedback-form-status',
       },
       STORAGE_KEYS: {
         CUSTOM_PROBLEMS: 'linux-terminal-custom-problems',
+        COMPLETED_PROBLEMS: 'command-trainer-completed-problems',
         THEME: 'linux-terminal-theme',
         LANGUAGE: 'linux-terminal-language',
         BOOKMARK_PREFIX: 'linux-terminal-bookmarks',
         SIDEBAR_WIDTH: 'linux-command-trainer-sidebar-width',
+        LEARNING_TIME: 'command-trainer-learning-time',
+        LEARNING_HISTORY: 'command-trainer-learning-history'
       },
       CSS_CLASSES: {
         SUCCESS: 'text--success',
@@ -110,7 +119,7 @@ window.addEventListener('DOMContentLoaded', () => {
       PROMPT_BASE_TEXT: 'user@linux:',
       TERMINAL_HISTORY_LIMIT: 50,
       MIN_SIDEBAR_WIDTH: 200,
-      BACKUP_VERSION: '1.0.0',
+      BACKUP_VERSION: '1.1.0',
     };
 
     /**
@@ -121,6 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
         appTitle: 'Command Trainer <Beta Version>',
         manageMyProblems: 'My問題を管理',
         settingsBtnLabel: '設定',
+        feedbackBtn: 'フィードバック',
         themeLight: 'ライトテーマ',
         themeDark: 'ダークテーマ',
         themeUbuntu: 'Ubuntu風テーマ',
@@ -133,6 +143,7 @@ window.addEventListener('DOMContentLoaded', () => {
         prevBtn: '前へ',
         nextBtn: '次へ',
         showAnsBtn: '答えを見る',
+        hideAnsBtn: '答えを隠す',
         resetBtn: 'リセット',
         problemListTitle: '問題一覧',
         progressLabel: '進捗: {0} / {1}',
@@ -155,13 +166,15 @@ window.addEventListener('DOMContentLoaded', () => {
         wizardNextBtn: '次へ',
         wizardCompleteBtn: '完了',
         settingsTitle: '設定',
+        settingsBackupRestore: 'バックアップと復元',
         settingsExportTitle: '設定をエクスポート',
-        settingsExportDesc: '現在の「My問題」、苦手チェックの状態、テーマ設定などを一つのファイルにバックアップします。',
+        settingsExportDesc: '現在の「My問題」、苦手チェックの状態、クリア状況、テーマ設定などを一つのファイルにバックアップします。',
         wizardRestoreTitle: 'バックアップから復元',
-        wizardRestoreDesc: 'エクスポートした設定ファイル（.json）を読み込んで、My問題や苦手チェックの状態を復元します。',
+        wizardRestoreDesc: 'エクスポートした設定ファイル（.json）を読み込んで、My問題や苦手チェックの状態、クリア状況を復元します。',
         wizardRestoreBtn: '設定ファイルを選択',
         wizardExportAllBtn: '全設定を出力',
         closeBtn: '閉じる',
+        submitBtn: '送信',
         bookmarkFilterBtn: '苦手のみ',
         linuxCommandCategory: 'Linuxコマンド',
         scenarioCategory: 'シナリオ編',
@@ -172,6 +185,14 @@ window.addEventListener('DOMContentLoaded', () => {
         explanationLabel: '説明',
         outputLabel: '（想定される出力）',
         stepLabel: 'ステップ',
+        feedbackModalTitle: 'フィードバックを送信',
+        feedbackModalDesc: 'アプリの改善のため、ご意見をお聞かせください。バグ報告や機能の要望など、お気軽にお送りください。',
+        feedbackTypeLabel: 'フィードバックの種類:',
+        feedbackTypeFeature: '機能要望',
+        feedbackTypeBug: 'バグ報告',
+        feedbackTypeUiUx: 'UI/UXの改善提案',
+        feedbackTypeOther: 'その他',
+        feedbackDetailsLabel: '詳細:',
         messages: {
           ALL_COMPLETE: '全てのコマンドを学習しました！<br>右下のリセットボタンで最初から再挑戦できます。',
           SESSION_START: 'サイドバーで学習したい問題にチェックを入れてください。',
@@ -193,6 +214,9 @@ window.addEventListener('DOMContentLoaded', () => {
           WIZARD_UPLOAD_FAIL_MULTI_JA: (count) => `❌ ${count} 件のファイルの読み込みに失敗しました。`,
           RESTORE_SUCCESS: '設定を正常に復元しました。ページをリロードします。',
           RESTORE_INVALID_FILE: '無効な設定ファイルです。形式を確認してください。',
+          FEEDBACK_SENDING: '送信中...',
+          FEEDBACK_SUCCESS: 'フィードバックを送信しました。ありがとうございます！',
+          FEEDBACK_ERROR: 'エラーが発生しました。時間をおいて再試行してください。',
         },
         problemData: {
           "ls-default": {
@@ -292,6 +316,7 @@ window.addEventListener('DOMContentLoaded', () => {
         appTitle: 'Command Trainer <Beta Version>',
         manageMyProblems: 'Manage My Problems',
         settingsBtnLabel: 'Settings',
+        feedbackBtn: 'Feedback',
         themeLight: 'Light Theme',
         themeDark: 'Dark Theme',
         themeUbuntu: 'Ubuntu Theme',
@@ -304,6 +329,7 @@ window.addEventListener('DOMContentLoaded', () => {
         prevBtn: 'Prev',
         nextBtn: 'Next',
         showAnsBtn: 'Answer',
+        hideAnsBtn: 'Hide Answer',
         resetBtn: 'Reset',
         problemListTitle: 'Problem List',
         progressLabel: 'Progress: {0} / {1}',
@@ -326,13 +352,15 @@ window.addEventListener('DOMContentLoaded', () => {
         wizardNextBtn: 'Next',
         wizardCompleteBtn: 'Complete',
         settingsTitle: 'Settings',
+        settingsBackupRestore: 'Backup & Restore',
         settingsExportTitle: 'Export Settings',
-        settingsExportDesc: 'Back up your "My Problems", bookmark status, theme settings, and more to a single file.',
+        settingsExportDesc: 'Back up your "My Problems", bookmark status, completion status, theme settings, and more to a single file.',
         wizardRestoreTitle: 'Restore from Backup',
-        wizardRestoreDesc: 'Load an exported settings file (.json) to restore your "My Problems" and bookmark status.',
+        wizardRestoreDesc: 'Load an exported settings file (.json) to restore your "My Problems", bookmark status, and completion status.',
         wizardRestoreBtn: 'Select Settings File',
         wizardExportAllBtn: 'Export All Settings',
         closeBtn: 'Close',
+        submitBtn: 'Submit',
         bookmarkFilterBtn: 'Bookmarked Only',
         linuxCommandCategory: 'Linux Commands',
         scenarioCategory: 'Scenarios',
@@ -343,6 +371,14 @@ window.addEventListener('DOMContentLoaded', () => {
         explanationLabel: 'Explanation',
         outputLabel: '(Expected Output)',
         stepLabel: 'Step',
+        feedbackModalTitle: 'Send Feedback',
+        feedbackModalDesc: 'To improve the application, please send us your feedback. Feel free to send bug reports, feature requests, etc.',
+        feedbackTypeLabel: 'Type of Feedback:',
+        feedbackTypeFeature: 'Feature Request',
+        feedbackTypeBug: 'Bug Report',
+        feedbackTypeUiUx: 'UI/UX Improvement',
+        feedbackTypeOther: 'Other',
+        feedbackDetailsLabel: 'Details:',
         messages: {
           ALL_COMPLETE: 'Congratulations! You have completed all the commands!<br>You can try again from the beginning with the reset button at the bottom right.',
           SESSION_START: 'Please check the problems you want to learn in the sidebar.',
@@ -364,6 +400,9 @@ window.addEventListener('DOMContentLoaded', () => {
           WIZARD_UPLOAD_FAIL_MULTI_EN: (count) => `❌ ${count} files failed to load.`,
           RESTORE_SUCCESS: 'Settings successfully restored. The page will now reload.',
           RESTORE_INVALID_FILE: 'Invalid settings file. Please check the file format.',
+          FEEDBACK_SENDING: 'Sending...',
+          FEEDBACK_SUCCESS: 'Thank you for your feedback!',
+          FEEDBACK_ERROR: 'An error occurred. Please try again later.',
         },
         problemData: {
           "ls": {
@@ -833,12 +872,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     class TerminalApp {
-      constructor(commandSetName, problems, uiManager, isFirstLoad, lang) {
+      constructor(commandSetName, problems, uiManager, appController, isFirstLoad, lang, globallyCompletedIds) {
         this.commandSetName = commandSetName;
         this.problems = problems;
         this.ui = uiManager;
+        this.appController = appController;
         this.isFirstLoad = isFirstLoad;
         this.lang = lang;
+        this.globallyCompletedIds = globallyCompletedIds;
         this.i18n = I18N[lang];
         this.bookmarkStorageKey = `${CONFIG.STORAGE_KEYS.BOOKMARK_PREFIX}_${this.commandSetName}`;
         this._initState();
@@ -858,6 +899,13 @@ window.addEventListener('DOMContentLoaded', () => {
           currentWorkingDirectory: '~',
           completedProblemIndices: new Set(),
         };
+
+        this.problems.forEach((problem, index) => {
+          const uniqueId = this._getUniqueProblemId(problem);
+          if (this.globallyCompletedIds.has(uniqueId)) {
+            this.state.completedProblemIndices.add(index);
+          }
+        });
       }
 
       async _init() {
@@ -877,11 +925,23 @@ window.addEventListener('DOMContentLoaded', () => {
         this._eventHandlers = {
           handlePrevClick: () => this._prevProblem(),
           handleNextClick: () => this._nextProblem(),
-          handleShowAnsClick: () => this.ui.showSolutionDisplay(
-            this.problems[this.state.currentProblemIndex],
-            this.state.isScenarioMode,
-            this.state.currentStepIndex
-          ),
+          handleShowAnsClick: () => {
+            const { solutionDisplayElement, showAnsBtn } = this.ui.dom;
+            const i18n = I18N[this.appController.currentLang];
+            
+            if (solutionDisplayElement.hidden) {
+                this.ui.showSolutionDisplay(
+                    this.problems[this.state.currentProblemIndex],
+                    this.state.isScenarioMode,
+                    this.state.currentStepIndex
+                );
+                showAnsBtn.textContent = i18n.hideAnsBtn;
+                showAnsBtn.dataset.i18nKey = 'hideAnsBtn';
+            } else {
+                this.ui.clearSolutionDisplay();
+                this._resetAnswerButton();
+            }
+          },
           handleResetClick: async () => await this.reset(),
           handleScreenClick: () => this.state.currentInput?.focus(),
           handleBookmarkChange: () => this._toggleBookmark(),
@@ -910,8 +970,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
       async reset() {
         if (this.state.currentInput) this.state.currentInput.disabled = true;
+        this.appController.resetCompletionStatus();
         this.ui.dom.screen.innerHTML = '';
         this.ui.clearSolutionDisplay();
+        this._resetAnswerButton();
         await this._playBootAnimation(true);
         const savedBookmarks = this.state.bookmarkedProblemIds;
         this._initState();
@@ -922,29 +984,57 @@ window.addEventListener('DOMContentLoaded', () => {
       }
 
       _handleCommandInput(command) {
+        if (!command) {
+          this.state.currentInput = this._createNewPromptLine();
+          return;
+        }
+
         this._addCommandToHistory(command);
         this.ui.clearSolutionDisplay();
+        this._resetAnswerButton();
+
+        const currentProblem = this.problems[this.state.currentProblemIndex];
+        const uniqueId = this._getUniqueProblemId(currentProblem);
+
         if (this.state.isScenarioMode) {
-          this._handleScenarioInput(command);
+            const currentStep = currentProblem.steps[this.state.currentStepIndex];
+            const isCorrect = this._isAnswerCorrect(command, currentStep.answers);
+            if (uniqueId) this.appController.recordAnswer(`${uniqueId}-step-${this.state.currentStepIndex + 1}`, isCorrect);
+            this._handleScenarioInput(command, isCorrect);
         } else {
-          this._handleStandardInput(command);
+            const isCorrect = this._isAnswerCorrect(command, currentProblem.answers);
+            if (uniqueId) this.appController.recordAnswer(uniqueId, isCorrect);
+            this._handleStandardInput(command, isCorrect);
         }
+
         if(this.state.currentProblemIndex < this.problems.length) {
           this.state.currentInput = this._createNewPromptLine();
         }
       }
+      
+      _markProblemAsComplete() {
+        const problem = this.problems[this.state.currentProblemIndex];
+        if (!problem) return;
 
-      _handleScenarioInput(command) {
+        this.state.completedProblemIndices.add(this.state.currentProblemIndex);
+
+        const uniqueId = this._getUniqueProblemId(problem);
+        if(uniqueId) {
+            this.appController.markProblemAsCompleted(uniqueId);
+        }
+      }
+
+      _handleScenarioInput(command, isCorrect) {
         const currentProblem = this.problems[this.state.currentProblemIndex];
         const currentStep = currentProblem.steps[this.state.currentStepIndex];
-        if (this._isAnswerCorrect(command, currentStep.answers)) {
+        if (isCorrect) {
           this._simulateCommandEffect(command);
           if (currentStep.successMessage) this.ui.printToScreen(currentStep.successMessage, CONFIG.CSS_CLASSES.SUCCESS);
           if(currentStep.output) this.ui.printToScreen(currentStep.output, CONFIG.CSS_CLASSES.EXPLANATION);
           this.state.currentStepIndex++;
           if (this.state.currentStepIndex >= currentProblem.steps.length) {
             this.ui.printToScreen(`\n${currentProblem.finalMessage}\n`, CONFIG.CSS_CLASSES.SUCCESS);
-            this.state.completedProblemIndices.add(this.state.currentProblemIndex);
+            this._markProblemAsComplete();
             this.state.isScenarioMode = false;
             this.state.currentProblemIndex++;
             this._displayCurrentProblem();
@@ -956,12 +1046,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      _handleStandardInput(command) {
+      _handleStandardInput(command, isCorrect) {
         const currentProblem = this.problems[this.state.currentProblemIndex];
         if (!currentProblem) {
           this.ui.printToScreen("All problems have been completed. Please reset.", CONFIG.CSS_CLASSES.ERROR);
-        } else if (this._isAnswerCorrect(command, currentProblem.answers)) {
-          this.state.completedProblemIndices.add(this.state.currentProblemIndex);
+        } else if (isCorrect) {
+          this._markProblemAsComplete();
           if (currentProblem.output) this.ui.printToScreen(currentProblem.output, CONFIG.CSS_CLASSES.EXPLANATION);
           this.state.currentProblemIndex++;
           this._displayCurrentProblem();
@@ -1011,6 +1101,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       _changeProblem(newIndex) {
         this.ui.clearSolutionDisplay();
+        this._resetAnswerButton();
         this.state.currentProblemIndex = newIndex;
         this._displayCurrentProblem();
         this.state.currentInput?.focus();
@@ -1097,6 +1188,13 @@ window.addEventListener('DOMContentLoaded', () => {
         const path = this.state.currentWorkingDirectory;
         const promptText = `${CONFIG.PROMPT_BASE_TEXT}${path}$ `;
         return this.ui.createNewPromptLine(promptText);
+      }
+
+      _resetAnswerButton() {
+          const { showAnsBtn } = this.ui.dom;
+          const i18n = I18N[this.appController.currentLang];
+          showAnsBtn.textContent = i18n.showAnsBtn;
+          showAnsBtn.dataset.i18nKey = 'showAnsBtn';
       }
 
       _printWelcomeMessages() {
@@ -1428,14 +1526,276 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    class DashboardManager {
+      constructor(appController) {
+          this.appController = appController;
+          this.dom = {
+              modal: document.getElementById('dashboardModal'),
+              openBtn: document.getElementById('dashboardBtn'),
+              closeBtn: document.getElementById('closeDashboardBtn'),
+              resetBtn: document.getElementById('resetStatsBtn'),
+              totalTimeContainer: document.getElementById('total-learning-time-container'),
+              totalTime: document.getElementById('total-learning-time'),
+              totalAnswers: document.getElementById('total-answers'),
+              completedProblems: document.getElementById('completed-problems'),
+              accuracy: document.getElementById('overall-accuracy'),
+              difficultList: document.getElementById('difficult-problems-list'),
+              chartCanvas: document.getElementById('category-proficiency-chart'),
+              chartTabsContainer: document.querySelector('.dashboard-tabs'),
+              chartTabBtns: document.querySelectorAll('.dashboard-tab-btn'),
+          };
+          this.chart = null;
+          this.history = [];
+          this.allProblemData = {};
+          this.initialProblemKeys = new Set();
+          this.customProblemKeys = new Set();
+          this._bindEvents();
+      }
+
+      _bindEvents() {
+          this.dom.openBtn.addEventListener('click', () => this.open());
+          this.dom.closeBtn.addEventListener('click', () => this.close());
+          this.dom.modal.addEventListener('click', (e) => {
+              if (e.target === this.dom.modal) this.close();
+          });
+          this.dom.resetBtn.addEventListener('click', () => {
+              if (confirm('本当に学習履歴をすべてリセットしますか？この操作は元に戻せません。')) {
+                  this.resetData();
+                  this.open();
+              }
+          });
+          this.dom.chartTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => this._handleTabSwitch(btn.dataset.chartType));
+          });
+      }
+
+      open() {
+          this.history = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.LEARNING_HISTORY) || '[]');
+          this.allProblemData = { ...this.appController.initialProblemData, ...this.appController.customProblemData };
+          this.initialProblemKeys = new Set(Object.keys(this.appController.initialProblemData));
+          this.customProblemKeys = new Set(Object.keys(this.appController.customProblemData));
+          
+          const time = parseInt(localStorage.getItem(CONFIG.STORAGE_KEYS.LEARNING_TIME) || '0', 10);
+          this.dom.totalTime.textContent = `${Math.floor(time / 60)}分 ${time % 60}秒`;
+
+          this._handleTabSwitch('all');
+          this.dom.modal.classList.add('is-visible');
+      }
+
+      close() {
+          this.dom.modal.classList.remove('is-visible');
+      }
+
+      resetData() {
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.LEARNING_TIME);
+          localStorage.removeItem(CONFIG.STORAGE_KEYS.LEARNING_HISTORY);
+      }
+      
+      _handleTabSwitch(dataType = 'all') {
+        this.dom.chartTabBtns.forEach(btn => {
+            btn.classList.toggle('is-active', btn.dataset.chartType === dataType);
+        });
+
+        let filteredHistory = [];
+        let relevantProblemData = {};
+        let totalProblems = 0;
+
+        switch(dataType) {
+          case 'default':
+            filteredHistory = this.history.filter(h => this.initialProblemKeys.has(h.problemId.split(':')[0]));
+            relevantProblemData = this.appController.initialProblemData;
+            break;
+          case 'my-problems':
+            filteredHistory = this.history.filter(h => this.customProblemKeys.has(h.problemId.split(':')[0]));
+            relevantProblemData = this.appController.customProblemData;
+            break;
+          case 'all':
+          default:
+            filteredHistory = this.history;
+            relevantProblemData = this.allProblemData;
+            break;
+        }
+
+        totalProblems = Object.values(relevantProblemData).reduce((sum, set) => sum + set.problems.length, 0);
+
+        this._updateSummary(filteredHistory, totalProblems, dataType);
+        this._updateDifficultProblems(filteredHistory, relevantProblemData);
+        this._updateChart(filteredHistory, relevantProblemData);
+      }
+
+      _updateSummary(history, totalProblems, dataType) {
+          this.dom.totalTimeContainer.style.display = (dataType === 'all') ? 'block' : 'none';
+          this.dom.totalAnswers.textContent = history.length;
+          const correctAnswers = history.filter(h => h.isCorrect).length;
+          this.dom.accuracy.textContent = history.length > 0 ? `${((correctAnswers / history.length) * 100).toFixed(1)}%` : '-%';
+          const completedSet = new Set(history.filter(h => h.isCorrect).map(h => h.problemId.split('-step-')[0]));
+          this.dom.completedProblems.textContent = `${completedSet.size} / ${totalProblems}`;
+      }
+      
+      _updateDifficultProblems(history, problemData) {
+          const attempts = {};
+          history.forEach(h => {
+              const baseId = h.problemId.split('-step-')[0];
+              if (!attempts[baseId]) attempts[baseId] = { correct: 0, incorrect: 0 };
+              h.isCorrect ? attempts[baseId].correct++ : attempts[baseId].incorrect++;
+          });
+          
+          const difficultProblems = Object.entries(attempts)
+              .filter(([, stats]) => stats.incorrect > 0)
+              .sort((a, b) => {
+                  const rateA = a[1].incorrect / (a[1].correct + a[1].incorrect);
+                  const rateB = b[1].incorrect / (b[1].correct + b[1].incorrect);
+                  if (rateB !== rateA) return rateB - rateA;
+                  return b[1].incorrect - a[1].incorrect;
+              })
+              .slice(0, 5);
+
+          this.dom.difficultList.innerHTML = '';
+          if (difficultProblems.length === 0) {
+              this.dom.difficultList.innerHTML = '<li>まだデータがありません</li>';
+          } else {
+              difficultProblems.forEach(([problemId, stats]) => {
+                  const [key, id] = problemId.split(':');
+                  const problem = problemData[key]?.problems.find(p => p.id == id);
+                  if (!problem) return;
+                  const problemText = (problem.question || problem.objective || problemId).substring(0, 30) + '...';
+                  const li = document.createElement('li');
+                  li.textContent = `${problemText} (不正解: ${stats.incorrect}回)`;
+                  this.dom.difficultList.appendChild(li);
+              });
+          }
+      }
+
+      _updateChart(history, problemData) {
+        const categoryStats = {};
+        Object.entries(problemData).forEach(([, value]) => {
+            categoryStats[value.name] = { total: 0, correct: 0 };
+        });
+
+        history.forEach(h => {
+            const [key] = h.problemId.split(':');
+            const categoryName = problemData[key]?.name;
+            if (categoryName && categoryStats[categoryName]) {
+                categoryStats[categoryName].total++;
+                if (h.isCorrect) categoryStats[categoryName].correct++;
+            }
+        });
+        
+        const labels = Object.keys(categoryStats);
+        const data = labels.map(label => {
+            const stats = categoryStats[label];
+            return stats.total > 0 ? (stats.correct / stats.total) * 100 : 0;
+        });
+
+        this.renderChart(labels, data);
+      }
+      
+      renderChart(labels, data) {
+        const hasData = labels.length > 0 && data.some(d => d > 0);
+        const noDataMessage = 'このカテゴリの学習データはありません';
+
+        const chartInnerWrapper = document.getElementById('chart-inner-wrapper');
+        const ITEM_HEIGHT = 35;
+        const PADDING_TOP_BOTTOM = 20;
+        const calculatedHeight = (labels.length * ITEM_HEIGHT) + PADDING_TOP_BOTTOM;
+        const minHeight = 280;
+        chartInnerWrapper.style.height = `${Math.max(minHeight, calculatedHeight)}px`;
+
+        const computedStyle = getComputedStyle(this.dom.chartCanvas);
+        const accentColor = computedStyle.getPropertyValue('--color-blue-accent').trim();
+
+        const toRgba = (color, alpha) => {
+          if (!color) return `rgba(79, 70, 229, ${alpha})`; 
+
+          let r = 0, g = 0, b = 0;
+          if (color.startsWith('#')) {
+              const size = color.length;
+              r = parseInt(size > 4 ? color.slice(1, 3) : color.slice(1, 2).repeat(2), 16);
+              g = parseInt(size > 4 ? color.slice(3, 5) : color.slice(2, 3).repeat(2), 16);
+              b = parseInt(size > 4 ? color.slice(5, 7) : color.slice(3, 4).repeat(2), 16);
+          } else if (color.startsWith('rgb')) {
+              [r, g, b] = color.match(/\d+/g).map(Number);
+          }
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+
+        const chartBackgroundColor = toRgba(accentColor, 0.7);
+        const chartBorderColor = toRgba(accentColor, 1);
+
+        if (this.chart) {
+            this.chart.data.labels = labels;
+            this.chart.data.datasets[0].data = data;
+            this.chart.data.datasets[0].backgroundColor = chartBackgroundColor;
+            this.chart.data.datasets[0].borderColor = chartBorderColor;
+            this.chart.options.plugins.title.display = !hasData;
+            this.chart.options.scales.x.ticks.color = computedStyle.getPropertyValue('--color-dimmed-text');
+            this.chart.options.scales.x.grid.color = computedStyle.getPropertyValue('--color-border');
+            this.chart.options.scales.y.ticks.color = computedStyle.getPropertyValue('--color-text');
+            this.chart.options.plugins.title.color = computedStyle.getPropertyValue('--color-dimmed-text');
+            this.chart.resize();
+            this.chart.update();
+        } else {
+          this.chart = new Chart(this.dom.chartCanvas, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: '正解率 (%)',
+                      data: data,
+                      backgroundColor: chartBackgroundColor,
+                      borderColor: chartBorderColor,
+                      borderWidth: 1,
+                      borderRadius: 4,
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  indexAxis: 'y',
+                  scales: {
+                      x: {
+                          beginAtZero: true,
+                          max: 100,
+                          ticks: { color: 'var(--color-dimmed-text)', font: { family: 'ui-monospace' } },
+                          grid: { color: 'var(--color-border)' }
+                      },
+                      y: {
+                          ticks: { color: 'var(--color-text)', font: { family: 'ui-monospace' } },
+                          grid: { display: false }
+                      }
+                  },
+                  plugins: {
+                      title: {
+                          display: !hasData,
+                          text: noDataMessage,
+                          color: 'var(--color-dimmed-text)',
+                          font: { size: 14 }
+                      },
+                      legend: { display: false },
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  return `正解率: ${context.raw.toFixed(1)}%`;
+                              }
+                          }
+                      }
+                  }
+              }
+          });
+        }
+      }
+    }
+
     class AppController {
       constructor() {
         this.currentLang = localStorage.getItem(CONFIG.STORAGE_KEYS.LANGUAGE) || CONFIG.DEFAULT_LANG;
         this.ui = new UIManager(this);
         this.themeManager = new ThemeManager(this.ui.dom.body, this.ui.dom.themeSelect);
         this.wizardManager = new WizardManager(this);
+        this.dashboardManager = new DashboardManager(this);
         this.initialProblemData = I18N[this.currentLang].problemData;
         this.customProblemData = this._loadCustomProblemsFromStorage();
+        this.completedProblemIds = this._loadCompletedProblemsFromStorage();
         this.currentApp = null;
         this.isFirstLoad = true;
         this.isBookmarkFilterActive = false;
@@ -1449,7 +1809,27 @@ window.addEventListener('DOMContentLoaded', () => {
         this.ui.renderSidebar();
         this._bindGlobalEvents();
         this._bindSettingsModalEvents();
+        this.startTrackingLearningTime();
         this.startNewSession();
+      }
+
+      startTrackingLearningTime() {
+        let sessionStartTime = Date.now();
+        window.addEventListener('beforeunload', () => {
+            const sessionTime = Math.round((Date.now() - sessionStartTime) / 1000);
+            const totalTime = parseInt(localStorage.getItem(CONFIG.STORAGE_KEYS.LEARNING_TIME) || '0', 10) + sessionTime;
+            localStorage.setItem(CONFIG.STORAGE_KEYS.LEARNING_TIME, totalTime);
+        });
+      }
+
+      recordAnswer(problemId, isCorrect) {
+          const history = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.LEARNING_HISTORY) || '[]');
+          history.push({
+              problemId,
+              isCorrect,
+              timestamp: Date.now()
+          });
+          localStorage.setItem(CONFIG.STORAGE_KEYS.LEARNING_HISTORY, JSON.stringify(history));
       }
 
       _applyLanguage() {
@@ -1487,17 +1867,75 @@ window.addEventListener('DOMContentLoaded', () => {
         this.startNewSession();
       }
 
-      _bindSettingsModalEvents() {
-        const { settingsBtn, settingsModal, closeSettingsBtn, exportAllSettingsBtn, restoreSettingsUpload } = this.ui.dom;
-        const openModal = () => settingsModal.classList.add(CONFIG.CSS_CLASSES.VISIBLE);
-        const closeModal = () => settingsModal.classList.remove(CONFIG.CSS_CLASSES.VISIBLE);
-        settingsBtn.addEventListener('click', openModal);
-        closeSettingsBtn.addEventListener('click', closeModal);
-        settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(); });
-        exportAllSettingsBtn.addEventListener('click', () => this._handleExportAllSettings());
-        restoreSettingsUpload.addEventListener('change', (e) => this._handleRestoreSettings(e));
+      _switchSettingsTab(tabId) {
+          const { settingsNav, settingsTabContents } = this.ui.dom;
+          const navItems = settingsNav.querySelectorAll('.settings-nav-item');
+          
+          navItems.forEach(item => {
+              item.classList.toggle('is-active', item.dataset.tab === tabId);
+          });
+      
+          settingsTabContents.forEach(pane => {
+              pane.classList.toggle('is-active', pane.dataset.tabContent === tabId);
+          });
       }
 
+      _bindSettingsModalEvents() {
+        const { settingsBtn, settingsModal, closeSettingsBtn, exportAllSettingsBtn, restoreSettingsUpload, settingsNav, feedbackForm, submitFeedbackBtn, feedbackFormStatus } = this.ui.dom;
+
+        const openModal = (defaultTab = 'backup') => {
+          settingsModal.classList.add(CONFIG.CSS_CLASSES.VISIBLE);
+          this._switchSettingsTab(defaultTab);
+        };
+        const closeModal = () => settingsModal.classList.remove(CONFIG.CSS_CLASSES.VISIBLE);
+
+        settingsBtn.addEventListener('click', () => openModal('backup'));
+        closeSettingsBtn.addEventListener('click', closeModal);
+        settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(); });
+        
+        const navItems = settingsNav.querySelectorAll('.settings-nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => this._switchSettingsTab(item.dataset.tab));
+        });
+
+        exportAllSettingsBtn.addEventListener('click', () => this._handleExportAllSettings());
+        restoreSettingsUpload.addEventListener('change', (e) => this._handleRestoreSettings(e));
+        
+        // Feedback form logic
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = new FormData(feedbackForm);
+            const i18n = I18N[this.currentLang];
+            const { SUCCESS, ERROR } = CONFIG.CSS_CLASSES;
+            
+            submitFeedbackBtn.disabled = true;
+            feedbackFormStatus.textContent = i18n.messages.FEEDBACK_SENDING;
+
+            try {
+                const response = await fetch(feedbackForm.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: {'Accept': 'application/json'}
+                });
+
+                if (response.ok) {
+                    feedbackFormStatus.innerHTML = `<span class="${SUCCESS}">${i18n.messages.FEEDBACK_SUCCESS}</span>`;
+                    feedbackForm.reset();
+                } else {
+                    const responseData = await response.json();
+                    if (responseData.errors) throw new Error(responseData.errors.map(error => error.message).join(", "));
+                    throw new Error(i18n.messages.FEEDBACK_ERROR);
+                }
+            } catch (error) {
+                console.error("Feedback submission error:", error);
+                feedbackFormStatus.innerHTML = `<span class="${ERROR}">${i18n.messages.FEEDBACK_ERROR}</span>`;
+            } finally {
+                submitFeedbackBtn.disabled = false;
+                setTimeout(() => feedbackFormStatus.textContent = '', 5000);
+            }
+        });
+      }
+      
       startNewSession() {
         if (this.currentApp) {
           this.currentApp.destroy();
@@ -1532,7 +1970,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
         this.ui.resetUIForNewSession();
         if (problemsToLoad.length > 0) {
-          this.currentApp = new TerminalApp('customSelection', problemsToLoad, this.ui, this.isFirstLoad, this.currentLang);
+          this.currentApp = new TerminalApp('customSelection', problemsToLoad, this.ui, this, this.isFirstLoad, this.currentLang, this.completedProblemIds);
         } else {
           this.currentApp = null;
           this.ui.dom.problemElement.textContent = I18N[this.currentLang].messages.SESSION_START;
@@ -1543,6 +1981,16 @@ window.addEventListener('DOMContentLoaded', () => {
           }
         }
         this.isFirstLoad = false;
+      }
+      
+      markProblemAsCompleted(uniqueProblemId) {
+        this.completedProblemIds.add(uniqueProblemId);
+        this._saveCompletedProblemsToStorage();
+      }
+      
+      resetCompletionStatus() {
+        this.completedProblemIds.clear();
+        this._saveCompletedProblemsToStorage();
       }
 
       commitWizardChanges(newData) {
@@ -1557,6 +2005,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const backupData = {
           version: CONFIG.BACKUP_VERSION,
           customProblems: this._loadCustomProblemsFromStorage(),
+          completedProblems: Array.from(this.completedProblemIds),
           bookmarks: {},
           settings: {
             theme: localStorage.getItem(CONFIG.STORAGE_KEYS.THEME) || CONFIG.DEFAULT_THEME,
@@ -1570,7 +2019,7 @@ window.addEventListener('DOMContentLoaded', () => {
             backupData.bookmarks[key] = JSON.parse(localStorage.getItem(key) || '[]');
           }
         }
-        if (Object.keys(backupData.customProblems).length === 0 && Object.keys(backupData.bookmarks).length === 0) {
+        if (Object.keys(backupData.customProblems).length === 0 && Object.keys(backupData.bookmarks).length === 0 && backupData.completedProblems.length === 0) {
           alert(I18N[this.currentLang].messages.NOTHING_TO_EXPORT);
           return;
         }
@@ -1586,7 +2035,7 @@ window.addEventListener('DOMContentLoaded', () => {
         reader.onload = (e) => {
           try {
             const data = JSON.parse(e.target.result);
-            if (data.version && data.customProblems && data.bookmarks && data.settings) {
+            if (data.version && data.customProblems && data.bookmarks && data.settings && Array.isArray(data.completedProblems)) {
               this._applyRestoredData(data);
               feedbackEl.innerHTML = `<span class="${CONFIG.CSS_CLASSES.SUCCESS}">${i18n.messages.RESTORE_SUCCESS}</span>`;
               setTimeout(() => location.reload(), 1500);
@@ -1609,6 +2058,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       _applyRestoredData(data) {
         localStorage.setItem(CONFIG.STORAGE_KEYS.CUSTOM_PROBLEMS, JSON.stringify(data.customProblems));
+        localStorage.setItem(CONFIG.STORAGE_KEYS.COMPLETED_PROBLEMS, JSON.stringify(data.completedProblems));
         Object.keys(localStorage)
           .filter(key => key.startsWith(CONFIG.STORAGE_KEYS.BOOKMARK_PREFIX))
           .forEach(key => localStorage.removeItem(key));
@@ -1640,12 +2090,30 @@ window.addEventListener('DOMContentLoaded', () => {
           return {};
         }
       }
+      
+      _loadCompletedProblemsFromStorage() {
+        try {
+          const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.COMPLETED_PROBLEMS);
+          return new Set(JSON.parse(stored || '[]'));
+        } catch(e) {
+          console.error('Failed to load completed problems:', e);
+          return new Set();
+        }
+      }
 
       _saveCustomProblemsToStorage() {
         try {
           localStorage.setItem(CONFIG.STORAGE_KEYS.CUSTOM_PROBLEMS, JSON.stringify(this.customProblemData));
         } catch (error) {
           console.error('Failed to save My Problems:', error);
+        }
+      }
+      
+      _saveCompletedProblemsToStorage() {
+        try {
+          localStorage.setItem(CONFIG.STORAGE_KEYS.COMPLETED_PROBLEMS, JSON.stringify([...this.completedProblemIds]));
+        } catch (error) {
+          console.error('Failed to save completed problems:', error);
         }
       }
 
