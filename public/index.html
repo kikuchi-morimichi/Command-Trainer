@@ -25,9 +25,14 @@
       </select>
       <div class="button-group">
         <button id="openWizardBtn" class="button" data-i18n-key="manageMyProblems">My問題を管理</button>
+        <button id="dashboardBtn" class="button button--icon" title="ダッシュボード" aria-label="ダッシュボード">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px">
+            <path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"/>
+          </svg>
+        </button>
         <button id="settingsBtn" class="button button--icon" title="設定" aria-label="設定">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.7C8.63,5.94,8.1,6.26,7.6,6.64L5.21,5.68C4.99,5.61,4.74,5.68,4.63,5.88l-1.92,3.32 c-0.12,0.22-0.07,0.47,0.12,0.61L4.86,11c-0.05,0.3-0.07,0.62-0.07,0.94s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.38-2.91c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.7C8.63,5.94,8.1,6.26,7.6,6.64L5.21,5.68C4.99,5.61,4.74,5.68,4.63,5.88l-1.92,3.32 c-0.12,0.22-0.07,0.47,0.12,0.61L4.86,11c-0.05,0.3-0.07,0.62-0.07,0.94s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44,0.17,0.48,0.41l0.38-2.91c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
           </svg>
         </button>
       </div>
@@ -81,7 +86,7 @@
               <span class="terminal__dot terminal__dot--red"></span>
               <span class="terminal__dot terminal__dot--yellow"></span>
               <span class="terminal__dot terminal__dot--green"></span>
-              <span class="terminal__app-name">bash</span>
+              <span class="terminal__app-name">terminal</span>
             </div>
             <div id="screen" class="terminal__screen" role="log" aria-live="polite"></div>
           </section>
@@ -202,28 +207,117 @@
   </div>
 
   <div id="settingsModal" class="wizard-modal">
-    <div class="wizard-content" style="max-width: 600px; height: auto; max-height: 80vh;">
+    <div class="wizard-content" style="max-width: 800px; height: auto; max-height: 85vh;">
       <header class="wizard-header" data-i18n-key="settingsTitle">設定</header>
-      <div class="wizard-body">
-        <section class="wizard-section">
-          <h4 class="wizard-section__title" data-i18n-key="settingsExportTitle">設定をエクスポート</h4>
-          <p class="text--muted" data-i18n-key="settingsExportDesc">現在の「My問題」、苦手チェックの状態、テーマ設定などを一つのファイルにバックアップします。</p>
-          <button id="exportAllSettingsBtn" class="button" data-i18n-key="wizardExportAllBtn">全設定を出力</button>
-        </section>
-        <section class="wizard-section">
-          <h4 class="wizard-section__title" data-i18n-key="wizardRestoreTitle">バックアップから復元</h4>
-          <p class="text--muted" data-i18n-key="wizardRestoreDesc">エクスポートした設定ファイル（.json）を読み込んで、My問題や苦手チェックの状態を復元します。</p>
-          <label for="restoreSettingsUpload" class="button" data-i18n-key="wizardRestoreBtn">設定ファイルを選択</label>
-          <input type="file" id="restoreSettingsUpload" accept=".json" hidden>
-          <div id="settings-restore-feedback"></div>
-        </section>
+      <div class="wizard-container">
+        <aside class="wizard-sidebar">
+          <ul id="settingsNav" class="settings-nav">
+            <li class="settings-nav-item" data-tab="backup" data-i18n-key="settingsBackupRestore">バックアップと復元</li>
+            <li class="settings-nav-item" data-tab="feedback" data-i18n-key="feedbackBtn">フィードバック</li>
+          </ul>
+        </aside>
+        <main class="wizard-main">
+          <div class="wizard-body">
+            <div id="backupTabContent" class="settings-tab-content" data-tab-content="backup">
+              <section class="wizard-section">
+                <h4 class="wizard-section__title" data-i18n-key="settingsExportTitle">設定をエクスポート</h4>
+                <p class="text--muted" data-i18n-key="settingsExportDesc">現在の「My問題」、苦手チェックの状態、クリア状況、テーマ設定などを一つのファイルにバックアップします。</p>
+                <button id="exportAllSettingsBtn" class="button" data-i18n-key="wizardExportAllBtn">全設定を出力</button>
+              </section>
+              <section class="wizard-section">
+                <h4 class="wizard-section__title" data-i18n-key="wizardRestoreTitle">バックアップから復元</h4>
+                <p class="text--muted" data-i18n-key="wizardRestoreDesc">エクスポートした設定ファイル（.json）を読み込んで、My問題や苦手チェックの状態、クリア状況を復元します。</p>
+                <label for="restoreSettingsUpload" class="button" data-i18n-key="wizardRestoreBtn">設定ファイルを選択</label>
+                <input type="file" id="restoreSettingsUpload" accept=".json" hidden>
+                <div id="settings-restore-feedback"></div>
+              </section>
+            </div>
+
+            <div id="feedbackTabContent" class="settings-tab-content" data-tab-content="feedback">
+               <section class="wizard-section">
+                <h4 class="wizard-section__title" data-i18n-key="feedbackModalTitle">フィードバックを送信</h4>
+                <p class="text--muted" data-i18n-key="feedbackModalDesc">アプリの改善のため、ご意見をお聞かせください。バグ報告や機能の要望など、お気軽にお送りください。</p>
+                <form id="feedbackForm" action="https://formspree.io/f/mnngqjqp" method="POST">
+                  <div style="margin-bottom: 1rem;">
+                    <label for="feedbackType" data-i18n-key="feedbackTypeLabel">フィードバックの種類:</label>
+                    <select name="種別" id="feedbackType" class="theme-select" style="width: 100%;">
+                      <option value="機能要望" data-i18n-key="feedbackTypeFeature">機能要望</option>
+                      <option value="バグ報告" data-i18n-key="feedbackTypeBug">バグ報告</option>
+                      <option value="UI/UXの改善提案" data-i18n-key="feedbackTypeUiUx">UI/UXの改善提案</option>
+                      <option value="その他" data-i18n-key="feedbackTypeOther">その他</option>
+                    </select>
+                  </div>
+                  <div style="margin-bottom: 1rem;">
+                    <label for="feedbackDetails" data-i18n-key="feedbackDetailsLabel">詳細:</label>
+                    <textarea name="内容" id="feedbackDetails" required
+                      style="width: 100%; height: 150px; padding: 8px; border-radius: var(--border-radius-md); border: 1px solid var(--color-border); background: var(--color-input-bg); color: var(--color-input-text); font: inherit; resize: vertical;"></textarea>
+                  </div>
+                   <div class="button-group" style="justify-content: flex-end;">
+                     <button id="submitFeedbackBtn" type="submit" class="button button--primary" data-i18n-key="submitBtn">送信</button>
+                  </div>
+                  <input type="hidden" name="_language" value="ja" />
+                </form>
+                <div id="feedback-form-status" style="margin-top: 1rem; font-size: var(--font-size-sm);"></div>
+               </section>
+            </div>
+          </div>
+          <footer class="wizard-footer" style="justify-content: flex-end;">
+            <button id="closeSettingsBtn" class="button" data-i18n-key="closeBtn">閉じる</button>
+          </footer>
+        </main>
       </div>
-      <footer class="wizard-footer" style="justify-content: flex-end;">
-        <button id="closeSettingsBtn" class="button" data-i18n-key="closeBtn">閉じる</button>
+    </div>
+  </div>
+
+  <div id="dashboardModal" class="wizard-modal">
+    <div class="wizard-content" style="max-width: 800px; height: auto; max-height: 85vh;">
+      <header class="wizard-header">学習ダッシュボード</header>
+      <div class="wizard-body" id="dashboard-body">
+
+        <section class="wizard-section">
+          <div class="dashboard-tabs">
+            <button class="dashboard-tab-btn is-active" data-chart-type="all">全体</button>
+            <button class="dashboard-tab-btn" data-chart-type="default">デフォルト問題</button>
+            <button class="dashboard-tab-btn" data-chart-type="my-problems">My問題</button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 24px 0;">
+            <div>
+              <h4 class="wizard-section__title">学習サマリー</h4>
+              <div id="summary-stats">
+                <p id="total-learning-time-container">総学習時間: <strong id="total-learning-time">0分</strong></p>
+                <p>総解答数: <strong id="total-answers">0</strong></p>
+                <p>クリア問題数: <strong id="completed-problems">0 / 0</strong></p>
+                <p>正解率: <strong id="overall-accuracy">-%</strong></p>
+              </div>
+            </div>
+            <div>
+              <h4 class="wizard-section__title">苦手な問題 Top 5</h4>
+              <ul id="difficult-problems-list" style="padding-left: 20px; font-size: var(--font-size-sm); color: var(--color-dimmed-text); margin-top:0;">
+                <li>まだデータがありません</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="wizard-section__title">カテゴリ別 習熟度</h4>
+            <div id="chart-container" style="position: relative; height: 300px; overflow-y: auto;">
+              <div id="chart-inner-wrapper">
+                <canvas id="category-proficiency-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+      </div>
+      <footer class="wizard-footer" style="justify-content: space-between;">
+        <button id="resetStatsBtn" class="button button--danger">学習履歴をリセット</button>
+        <button id="closeDashboardBtn" class="button">閉じる</button>
       </footer>
     </div>
   </div>
 
-<script src="app.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
